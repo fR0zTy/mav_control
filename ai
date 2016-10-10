@@ -1,0 +1,14 @@
+fully observable -> all variables are known (entire state is observable)
+partially observable -> some variables are known ( memorise past moves and predict)
+
+deterministic -> outcome is known
+stocastic -> random systems 
+
+discrete -> finite
+continous -> infinite
+
+benign -> without objective
+adversial -> objective based
+
+
+perception action cycle

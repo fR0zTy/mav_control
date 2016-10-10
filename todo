@@ -1,0 +1,10 @@
+
+fix multiple keys
+
+add labels for position, orientation, pry
+fix ros_topics variable
+
+check for style configuration for gui
+
+fix access errors for gui elems
+
