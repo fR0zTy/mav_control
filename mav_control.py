@@ -17,6 +17,7 @@ try:
     import warnings
     import subprocess
     import rospy
+    import rospkg
     
 except ImportError as ie:
     print('Import Libraries missing:', ie)
@@ -32,14 +33,17 @@ class MAV_Control(QtGui.QMainWindow):
         QtGui.QMainWindow.__init__(self)
         loadUi("gui/GUI.ui", self)
         
+        self.ros_obj = ROS_Control()
+        self.rospack = rospkg.RosPack()
+        self.ros_obj.check_rosmaster()        
+        
+        self.pkg_name = ''
         self.output_directory = ''
-        self.op_mode = ''
+        self.operation_mode = ''
+        self.controller_mode = ''
         self.config = ''
-        self.ros_ok = False
-#        self.gazebo_ok = False
         self.ros_config = ''
-#        self.gazebo_status_label.setStyleSheet('color : Red')
-#        self.gazebo_status_label.setText('OFFLINE')
+
         self.keyslist = []
         self.set_label('','Black')
         self.quit_btn.clicked.connect(QtCore.QCoreApplication.instance().quit)
@@ -50,9 +54,8 @@ class MAV_Control(QtGui.QMainWindow):
         self.radio_controller_OA.toggled.connect(self.radio_toggled)        
         self.controller_widget.setEnabled(True)
         self.radio_controller.setChecked(True)
-        self.start_ros_btn.clicked.connect(self.start_ros)
-        self.ros_obj = ROS_Control()
-        self.ros_obj.check_rosmaster()
+
+
         if self.ros_obj.is_online:
             self.ros_label.setStyleSheet('color : Green')
             self.ros_label.setText('ONLINE')    
@@ -65,24 +68,32 @@ class MAV_Control(QtGui.QMainWindow):
         
 #__________________________________________________________________________________________________
         
+
     def operation_mode(self):
+
         if self.mav_radio.isChecked():
             self.gazebo_config_widget.setEnabled(False)
             self.mav_widget.setEnabled(True)
             self.sim_widget.setEnabled(False)
+            self.controller_mode = 'mav'            
+            
         if self.sim_radio.isChecked():
             self.mav_widget.setEnabled(True)
             self.gazebo_widget.setEnabled(True)
             self.sim_widget.setEnabled(False)
-
+            self.controller_mode = 'sim'
+            
+#__________________________________________________________________________________________________
+            
     def radio_toggled(self):
+
         if self.radio_controller.isChecked():
-            self.op_mode = 'rc'
+            self.operation_mode = 'rc'
             self.topics_widget.setEnabled(False)
             self.auto_widget.setEnabled(False)
             self.warn_widget.setEnabled(False)
         elif self.radio_controller_OA.isChecked():
-            self.op_mode = 'rc_oa'
+            self.operation_mode = 'rc_oa'
             self.topics_widget.setEnabled(True)
             self.auto_widget.setEnabled(True)
             self.warn_widget.setEnabled(True)
@@ -193,52 +204,20 @@ class MAV_Control(QtGui.QMainWindow):
 #__________________________________________________________________________________________________
     
     def load_config_btn_clicked(self):
-
-        if self.output_dir_txt_field.text() != '':
-            self.output_directory = self.output_dir_txt_field.text()
         
-        if self.config == '':
-            self.config = os.path.join(self.output_directory, 'mav_configuration.json')
-            
-        try:
-            with open(self.config) as f:
-                json_obj = json.load(f)
-            self.op_mode = json_obj.get('operation_mode')
-            
-            if self.op_mode == 'rc':
-                self.radio_controller.setChecked(True)
-            elif self.op_mode == 'rc_oa':
-                self.radio_controller_OA.setChecked(True)
-            else:
-                print('Invalid Operation Mode')
-                self.set_label('Invalid Operation Mode','Red')
-            
-            self.output_dir_txt_field.setText(json_obj.get('output_directory'))
-            self.output_directory = json_obj.get('output_directory')
-            
-   ## check ros_topics var         
-            
-#            if json_obj.get('laser_scan_topic') in self.ros_topics[0]:
-#                index = self.ls_topic_cb.findText(json_obj.get('laser_scan_topic'), QtCore.Qt.MatchFixedString)
-#                if index >= 0:
-#                    self.ls_topic_cb.setCurrentIndex(index)
+        #reimplement this method
+
+        
+#        config_path = os.path.join(self.rospack.get_path(self.pkg_name, "mav_control_configuration"))
+#        
 #            
-#            if json_obj.get('stereo_cam_right_topic') in self.ros_topics[0]:
-#                index = self.st_r_cb.findText(json_obj.get('stereo_cam_right_topic'), QtCore.Qt.MatchFixedString)
-#                if index >= 0:
-#                    self.st_r_cb.setCurrentIndex(index)
-#                    
-#            if json_obj.get('stereo_cam_left_topic') in self.ros_topics[0]:
-#                index = self.st_l_cb.findText(json_obj.get('stereo_cam_left_topic'), QtCore.Qt.MatchFixedString)
-#                if index >= 0:
-#                    self.st_l_cb.setCurrentIndex(index)
-            
-        except IOError as ioe:
-            print('File not found', ioe)
-            self.set_label('Configuration file not found', 'Red')
-        except IndexError as iee:
-            print('Invalid Key in configuration file', iee)
-            self.set_label('Invalid key in configuration file', 'Red')
+#            
+#        except IOError as ioe:
+#            print('File not found', ioe)
+#            self.set_label('Configuration file not found', 'Red')
+#        except IndexError as iee:
+#            print('Invalid Key in configuration file', iee)
+#            self.set_label('Invalid key in configuration file', 'Red')
 #__________________________________________________________________________________________________
 
     
@@ -295,7 +274,27 @@ class MAV_Control(QtGui.QMainWindow):
     
 if __name__ == '__main__':
     app = QtGui.QApplication(sys.argv)
-    
     MainWindow = MAV_Control()
+    
+    if len(sys.argv) == 3:
+        
+        if sys.argv[2] == '-h' or sys.argv[2] == '-help' or sys.argv[2] == '--help':
+            pass #print usage information here
+    
+    elif len(sys.argv) == 4:
+        
+        if sys.argv[2] == '-l':
+            
+            if os.path.exists(sys.argv[3]):
+                
+                MainWindow.config = sys.argv[3]
+
+            else:
+                warnings.warn('file does not exist')
+                sys.exit()
+            
+        
+    
+    
     MainWindow.show()
     sys.exit(app.exec_())
