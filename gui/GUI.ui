@@ -307,7 +307,26 @@
        </property>
        <layout class="QHBoxLayout" name="horizontalLayout_36">
         <item>
+         <widget class="QLabel" name="label_33">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>1</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string>Operation Environment :</string>
+          </property>
+         </widget>
+        </item>
+        <item>
          <widget class="QRadioButton" name="sim_radio">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+            <horstretch>1</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="text">
            <string>Simulation</string>
           </property>
@@ -315,6 +334,12 @@
         </item>
         <item>
          <widget class="QRadioButton" name="mav_radio">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+            <horstretch>1</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="text">
            <string>MAV</string>
           </property>
@@ -336,16 +361,41 @@
        </property>
        <layout class="QHBoxLayout" name="horizontalLayout_4">
         <item>
-         <widget class="QRadioButton" name="radio_controller">
+         <widget class="QLabel" name="label_35">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>1</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string>Operation Mode :</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="checkBox_2">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+            <horstretch>1</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="text">
            <string>Controller</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QRadioButton" name="radio_controller_OA">
+         <widget class="QCheckBox" name="checkBox">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+            <horstretch>1</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="text">
-           <string>Controller with Obstacle Avoidance</string>
+           <string>Obstacle Avoidance</string>
           </property>
          </widget>
         </item>
