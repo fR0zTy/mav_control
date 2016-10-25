@@ -5,19 +5,22 @@ Created on Mon Sep 26 13:43:10 2016
 
 @author: fr0zty
 """
+import sys
+import os
+
 try:
     from PySide import QtCore, QtGui, QtUiTools
     from gui.pyside_dynamic import loadUi
     from classes.obstacle_avoidance import Obstacle_Avoidance
-    from sim_test.classes import ROS_Control
+    from classes.ros_control import ROS_Control
+    from classes.base_controller import Base_Controller
     import numpy as np
-    import sys
-    import os
     import json
     import warnings
     import subprocess
     import rospy
     import rospkg
+    import rosmaster
     
 except ImportError as ie:
     print('Import Libraries missing:', ie)
@@ -30,12 +33,10 @@ class MAV_Control(QtGui.QMainWindow):
     '''
     def __init__(self):
         
+        #Default state Initialization
+        
         QtGui.QMainWindow.__init__(self)
         loadUi("gui/GUI.ui", self)
-        
-        self.ros_obj = ROS_Control()
-        self.rospack = rospkg.RosPack()
-        self.ros_obj.check_rosmaster()        
         
         self.pkg_name = ''
         self.output_directory = ''
@@ -44,8 +45,17 @@ class MAV_Control(QtGui.QMainWindow):
         self.config = ''
         self.ros_config = ''
 
-        self.keyslist = []
-        self.set_label('','Black')
+        self.ros_obj = ROS_Control()
+        self.rospack = rospkg.RosPack()
+        self.ros_obj.check_rosmaster()        
+        
+        #self.controller_obj = Base_Controller()
+        
+        #Tab 1 initilization
+        self.start_ros_btn.clicked.connect(self.start_ros_btn_clicked)
+        
+        
+        #Tab 2 initialization
         self.quit_btn.clicked.connect(QtCore.QCoreApplication.instance().quit)
         self.save_config_btn.clicked.connect(self.save_config_btn_clicked)
         self.output_btn.clicked.connect(self.output_directory_btn_clicked)
@@ -54,7 +64,7 @@ class MAV_Control(QtGui.QMainWindow):
         self.radio_controller_OA.toggled.connect(self.radio_toggled)        
         self.controller_widget.setEnabled(True)
         self.radio_controller.setChecked(True)
-
+        self.set_label('','Black')
 
         if self.ros_obj.is_online:
             self.ros_label.setStyleSheet('color : Green')
@@ -62,7 +72,7 @@ class MAV_Control(QtGui.QMainWindow):
         else:
             self.ros_label.setStyleSheet('color : Red')
             self.ros_label.setText('OFFLINE')
-            self.set_label('ROS not online')
+            self.set_label('ROS not online', 'Red')
         
 
         
@@ -115,13 +125,17 @@ class MAV_Control(QtGui.QMainWindow):
 #        self.activation_threshold = self.auto_spinbox.value()
 #        self.rate = self.rate_spinbox.value()
 
-        
+    def start_ros_btn_clicked(self):
+        rospy.loginfo("Starting ROS")
+        master = rosmaster.master.Master(11311)
+        master.start()
+        rospy.loginfo('rosmaster running')        
 #__________________________________________________________________________________________________
 
 #-----------------------------------Central controls and Labels------------------------------------
 #__________________________________________________________________________________________________                
     def set_status_values(self):
-        if self.ros_ok:
+        if self.ros_obj.is_online:
             self.ros_label.setStyleSheet('color: Green')
             self.ros_label.setText('ONLINE')
             
@@ -132,21 +146,20 @@ class MAV_Control(QtGui.QMainWindow):
         
     def keyPressEvent(self, event):
         if type(event) == QtGui.QKeyEvent:
-            self.firstrelease = True
-            print(event.key())
-            self.set_label('%s'%event.key(),'Red')
-            event.accept()
-        else:
-            event.ignore()
+            if event.isAutoRepeat():
+                self.pitch_up.click()
+                pass
+            else:
+                print(str(event.key()) + " pressed")
 
     def keyReleaseEvent(self, event):
-        if self.firstrelease == True:
-            self.processmultikeys(self.keyslist)
-        self.firstrelease = False
-        del self.keyslist[-1]
+        if type(event) == QtGui.QKeyEvent:
+            if event.isAutoRepeat():
+                pass
+            else:
+                print(str(event.key()) + "released")
             
-    def processmultikeys(self,keyspressed):
-        print(keyspressed)
+
 #__________________________________________________________________________________________________
 
 #---------------------------------------Bottom Buttons---------------------------------------------
@@ -204,7 +217,7 @@ class MAV_Control(QtGui.QMainWindow):
 #__________________________________________________________________________________________________
     
     def load_config_btn_clicked(self):
-        
+        pass
         #reimplement this method
 
         
