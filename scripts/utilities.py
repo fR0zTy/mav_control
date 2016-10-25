@@ -1,16 +1,19 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
 @author: fr0zty
 """
 
 # Module : utilities
+import sys
+import os
+
 try:
     import json
     import rospkg
-    import os
+    import rospy
     import warnings
-    import sys
+    from std_msgs.msg import String
 except ImportError as ie:
     print("Import modules missing", ie)
     
@@ -71,4 +74,4 @@ def create_configuration_file(mode="default", pkg_name=""):
             json.dump(config, f)
             
     f.close()
-    
+                
