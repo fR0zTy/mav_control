@@ -73,8 +73,6 @@ class ObstacleAvoidance(object):
         quadrant_weights[:,0] = safe_quadrants
 
 
-
-
 if __name__ == '__main__':
 
     unsafe_quadrants = np.zeros(8, dtype=np.bool)
@@ -87,8 +85,3 @@ if __name__ == '__main__':
     unsafe_quadrants[5] = True
     unsafe_quadrants[6] = False
     unsafe_quadrants[7] = True
-
-
-
-
-

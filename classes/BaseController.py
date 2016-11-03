@@ -6,7 +6,7 @@ Created on Tue Oct  4 14:35:10 2016
 @author: fr0zty
 """
 import sys
-import time, sys, math
+import time
 
 try:
     import numpy as np
@@ -66,10 +66,10 @@ class BaseController(object):
                         QtCore.Qt.Key_S: [-dx, 0, 0, 0, 0, 0],
                         QtCore.Qt.Key_A: [0, dy, 0, 0, 0, 0],
                         QtCore.Qt.Key_D: [0, -dy, 0, 0, 0, 0], 
-                        QtCore.Qt.Key_UP: [0, 0, dz, 0, 0, 0],
-                        QtCore.Qt.Key_DOWN: [0, 0, -dz, 0, 0, 0],
-                        QtCore.Qt.Key_LEFT: [0, 0, 0, 0, 0, daz],
-                        QtCore.Qt.Key_RIGHT: [0, 0, 0, 0, 0, -daz],
+                        QtCore.Qt.Key_I: [0, 0, dz, 0, 0, 0],
+                        QtCore.Qt.Key_K: [0, 0, -dz, 0, 0, 0],
+                        QtCore.Qt.Key_J: [0, 0, 0, 0, 0, daz],
+                        QtCore.Qt.Key_L: [0, 0, 0, 0, 0, -daz],
                         }
         return twist_events[key_events]
 
