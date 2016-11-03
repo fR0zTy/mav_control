@@ -11,9 +11,7 @@ import os
 try:
     from PySide import QtCore, QtGui, QtUiTools
     from gui.pyside_dynamic import loadUi
-    from classes.obstacle_avoidance import Obstacle_Avoidance
-    from classes.ros_control import ROS_Control
-    from classes.base_controller import Base_Controller
+    from mav_control import ObstacleAvoidance, ROSControl, BaseController
     import numpy as np
     import json
     import warnings
@@ -45,7 +43,7 @@ class MAV_Control(QtGui.QMainWindow):
         self.config = ''
         self.ros_config = ''
 
-        self.ros_obj = ROS_Control()
+        self.ros_obj = ROSControl()
         self.rospack = rospkg.RosPack()
         self.ros_obj.check_rosmaster()        
         
